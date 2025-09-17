@@ -162,73 +162,65 @@ function setupEventListeners() {
     // --------------------------------------------------
     // PARTE 1: NAVEGACIÓN PRINCIPAL POR PESTAÑAS (Lógica de no-recarga)
     // --------------------------------------------------
-    // Usar delegación de eventos para manejar clics en los botones de pestaña
-    document.addEventListener('click', (e) => {
-        const tabBtn = e.target.closest('.tab-btn');
-        if (!tabBtn) return;
-        
-        e.preventDefault();
-        const tabId = tabBtn.dataset.tab;
-        if (!tabId) return;
+    document.querySelectorAll('.tab-btn').forEach(tab => {
+        tab.addEventListener('click', (e) => {
+            e.preventDefault(); // Prevenir comportamiento por defecto de los enlaces
+            e.stopPropagation(); // Detener la propagación del evento
+            
+            const tabId = e.currentTarget.getAttribute('data-tab');
+            if (!tabId) return; // Salir si no hay ID de pestaña
 
-        // Ocultar todos los paneles y desactivar todos los botones
-        document.querySelectorAll('.panel').forEach(p => p.style.display = 'none');
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            // Ocultar todos los paneles y desactivar todos los botones
+            document.querySelectorAll('.panel').forEach(p => p.style.display = 'none');
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
 
-        // Activar el botón y el panel seleccionados
-        const targetPanel = document.getElementById(tabId);
-        if (!targetPanel) return;
-        
-        tabBtn.classList.add('active');
-        targetPanel.style.display = 'block';
-        
-        // Actualizar la URL sin recargar la página
-        const newUrl = window.location.pathname + (tabId !== 'dashboard' ? `#${tabId}` : '');
-        window.history.pushState({ tabId }, '', newUrl);
+            // Activar el botón y el panel seleccionados
+            const targetPanel = document.getElementById(tabId);
+            if (!targetPanel) return; // Salir si no se encuentra el panel
+            
+            e.currentTarget.classList.add('active');
+            targetPanel.style.display = 'block';
 
-        const hasBeenLoaded = targetPanel.dataset.loaded === 'true';
-
-        // Excepciones: Siempre recargar el dashboard y la búsqueda
-        if (!hasBeenLoaded || tabId === 'dashboard' || tabId === 'buscar') {
-            loadPanelContent(tabId);
-            // Marcamos el panel como cargado para que no vuelva a recargarse,
-            // a menos que sea una de las excepciones.
-            targetPanel.dataset.loaded = 'true';
-        }
-        
-        // Si la pestaña a la que vamos es la de chat, llamamos a su lógica de renderizado/sincronización
-        if (tabId === 'whatsapp_chat') {
-            renderWhatsappChatView();
-        }
+            // Cargar el contenido del panel según corresponda
+            switch (tabId) {
+                case 'dashboard':
+                    renderDashboard();
+                    break;
+                case 'buscar':
+                    renderCandidateSearch();
+                    break;
+                case 'vacantes':
+                    renderVacanciesView();
+                    break;
+                case 'postulaciones':
+                    renderPostulacionesView();
+                    break;
+                case 'entrevistas':
+                    renderEntrevistasView();
+                    break;
+                case 'contratados':
+                    renderContratadosView();
+                    break;
+                case 'clientes':
+                    renderClientsView();
+                    break;
+                case 'reportes':
+                    renderReportsView();
+                    break;
+                case 'configuracion':
+                    renderSettingsView();
+                    break;
+                case 'mensajes':
+                    renderMessagesView();
+                    break;
+                case 'whatsapp_chat':
+                    renderWhatsappChatView();
+                    break;
+                default:
+                    console.warn(`No se encontró un manejador para la pestaña: ${tabId}`);
+            }
+        });
     });
-    
-    // Manejar el botón de retroceso/avance del navegador
-    window.addEventListener('popstate', (e) => {
-        const tabId = e.state?.tabId || 'dashboard';
-        const tabBtn = document.querySelector(`.tab-btn[data-tab="${tabId}"]`);
-        if (tabBtn) tabBtn.click();
-    });
-    
-    // Cargar la pestaña correcta basada en el hash de la URL al cargar la página
-    const loadTabFromHash = () => {
-        const hash = window.location.hash.replace('#', '');
-        const tabId = hash || 'dashboard';
-        const tabBtn = document.querySelector(`.tab-btn[data-tab="${tabId}"]`);
-        if (tabBtn) {
-            tabBtn.click();
-        } else {
-            // Si no se encuentra la pestaña, cargar el dashboard por defecto
-            const defaultTab = document.querySelector('.tab-btn[data-tab="dashboard"]');
-            if (defaultTab) defaultTab.click();
-        }
-    };
-    
-    // Cargar la pestaña correcta después de que se cargue el DOM
-    if (document.readyState === 'complete') {
-        loadTabFromHash();
-    } else {
-        window.addEventListener('load', loadTabFromHash);
-    }
 
     // --------------------------------------------------
     // PARTE 2: LISTENER PARA LA TECLA ESCAPE
@@ -375,31 +367,95 @@ function handleError(error) {
 // ======================================================
 // --- LÓGICA DE CARGA DE PANELES ---
 // ======================================================
-function loadPanelContent(panelId) {
+async function loadPanelContent(panelId) {
     const panel = document.getElementById(panelId);
-    if (!panel) return;
-    
-    if (panelId === 'mensajeria' && panel.innerHTML.trim() !== '' && !panel.querySelector('.spinner')) {
+    if (!panel) {
+        console.error(`Panel no encontrado: ${panelId}`);
         return;
     }
-    
-    panel.innerHTML = '<div class="spinner"></div>';
 
-    switch(panelId) {
-        case 'dashboard': renderDashboard(); break;
-        case 'buscar': renderCandidateSearch(); break;
-        case 'vacantes': renderVacanciesView(); break;
-        case 'postulaciones': renderPostulacionesView(); break;
-        case 'entrevistas': renderEntrevistasView(); break;
-        case 'contratados': renderContratadosView(); break;
-        case 'clientes': renderClientsView(); break;
-        case 'reportes': renderReportsView(); break;
-        case 'configuracion': renderSettingsView(); break;
-        case 'chatbot_settings': renderChatbotSettingsView(); break;
-        case 'whatsapp_chat': renderWhatsappChatView(); break;
-        case 'mensajes': renderMessagesView(); break;
-        case 'posts': renderPostsManagementView(); break;
-        default: panel.innerHTML = `<h1>Panel '${panelId}' no implementado.</h1>`;
+    // Mostrar indicador de carga
+    const loadingHtml = `
+        <div class="loading-overlay">
+            <div class="spinner"></div>
+            <p>Cargando ${panelId}...</p>
+        </div>
+    `;
+    
+    // Guardar el contenido actual para restaurarlo en caso de error
+    const originalContent = panel.innerHTML;
+    panel.innerHTML = loadingHtml;
+
+    try {
+        // Llamar a la función de renderizado correspondiente
+        switch(panelId) {
+            case 'dashboard': 
+                await renderDashboard(); 
+                break;
+            case 'buscar': 
+                await renderCandidateSearch(); 
+                break;
+            case 'vacantes': 
+                await renderVacanciesView(); 
+                break;
+            case 'postulaciones': 
+                await renderPostulacionesView(); 
+                break;
+            case 'entrevistas': 
+                await renderEntrevistasView(); 
+                break;
+            case 'contratados': 
+                await renderContratadosView(); 
+                break;
+            case 'clientes': 
+                await renderClientsView(); 
+                break;
+            case 'reportes': 
+                await renderReportsView(); 
+                break;
+            case 'configuracion': 
+                await renderSettingsView(); 
+                break;
+            case 'chatbot_settings': 
+                await renderChatbotSettingsView(); 
+                break;
+            case 'whatsapp_chat': 
+                await renderWhatsappChatView(); 
+                break;
+            case 'mensajes': 
+                await renderMessagesView(); 
+                break;
+            case 'posts': 
+                await renderPostsManagementView(); 
+                break;
+            default: 
+                console.warn(`Panel no reconocido: ${panelId}`);
+                throw new Error(`Panel no reconocido: ${panelId}`);
+        }
+        
+        // Marcar el panel como cargado
+        panel.setAttribute('data-loaded', 'true');
+        
+    } catch (error) {
+        console.error(`Error al cargar el panel ${panelId}:`, error);
+        
+        // Mostrar mensaje de error con opción de reintentar
+        panel.innerHTML = `
+            <div class="error-message">
+                <h3>Error al cargar el contenido</h3>
+                <p>${error.message || 'Ocurrió un error inesperado'}</p>
+                <button onclick="loadPanelContent('${panelId}')" class="btn primary-btn">
+                    <i class="fas fa-sync-alt"></i> Reintentar
+                </button>
+            </div>
+        `;
+        
+        // Restaurar el contenido original después de un tiempo
+        setTimeout(() => {
+            if (panel.innerHTML.includes('error-message')) {
+                panel.innerHTML = originalContent;
+            }
+        }, 5000);
     }
 }
 
