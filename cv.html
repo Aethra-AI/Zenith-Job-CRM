@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CV - Keneth Xavier Castellanos Henriquez</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #34495e;
+            --text-color: #34495e;
+            --background-color: #f4f4f9;
+            --page-background: #ffffff;
+            --accent-color: #3498db;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            background-color: var(--page-background);
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            border-top: 5px solid var(--accent-color);
+        }
+
+        h1 {
+            color: var(--primary-color);
+            font-size: 2.5em;
+            font-weight: 700;
+            margin: 0 0 5px 0;
+            text-align: center;
+        }
+
+        .subtitle {
+            text-align: center;
+            font-size: 1.2em;
+            font-weight: 500;
+            color: var(--secondary-color);
+            margin-bottom: 25px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 20px;
+        }
+
+        h2 {
+            color: var(--primary-color);
+            font-size: 1.5em;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--accent-color);
+            font-weight: 700;
+        }
+
+        h3 {
+            color: var(--secondary-color);
+            font-size: 1.2em;
+            margin-bottom: 5px;
+            font-weight: 700;
+        }
+
+        h3 span {
+            font-weight: 400;
+            color: #555;
+        }
+
+        p, ul {
+            margin-bottom: 15px;
+        }
+
+        ul {
+            padding-left: 20px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        strong {
+            font-weight: 700;
+        }
+
+        .contact-info {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--secondary-color);
+        }
+
+        .contact-item svg {
+            width: 18px;
+            height: 18px;
+            fill: var(--accent-color);
+        }
+        
+        .skills-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .skill-category h4 {
+            color: var(--secondary-color);
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        @media print {
+            body {
+                background-color: #fff;
+                padding: 0;
+            }
+            .container {
+                box-shadow: none;
+                margin: 0;
+                max-width: 100%;
+                border-top: none;
+                padding: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Keneth Xavier Castellanos Henriquez</h1>
+            <p class="subtitle">Gerente | Supervisor | Jefe de Inventarios | Programador</p>
+            <div class="contact-info">
+                <div class="contact-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M6.62,10.79C8.06,13.62 10.38,15.94 13.21,17.38L15.41,15.18C15.69,14.9 16.08,14.82 16.43,14.93C17.55,15.3 18.75,15.5 20,15.5A1,1 0 0,1 21,16.5V20A1,1 0 0,1 20,21A17,17 0 0,1 3,4A1,1 0 0,1 4,3H7.5A1,1 0 0,1 8.5,4C8.5,5.25 8.7,6.45 9.07,7.57C9.18,7.92 9.1,8.31 8.82,8.59L6.62,10.79Z" /></svg>
+                    <span>+504 9922-1198</span>
+                </div>
+                <div class="contact-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20,8L12,13L4,8V6L12,11L20,6M20,4H4C2.89,4 2,4.89 2,6V18A2,2 0 0,0 4,20H20A2,2 0 0,0 22,18V6C22,4.89 21.1,4 20,4Z" /></svg>
+                    <span>kxavier011315@gmail.com</span>
+                </div>
+                <div class="contact-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A4,4 0 0,1 16,8C16,10.21 14.21,12 12,12A4,4 0 0,1 8,8A4,4 0 0,1 12,4M12,14C16,14 20,16 20,20V20.4C18.8,21.3 17.5,21.9 16,22.2L12,19L8,22.2C6.5,21.9 5.2,21.3 4,20.4V20C4,16 8,14 12,14Z" /></svg>
+                    <span>San Pedro Sula, Honduras</span>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <section>
+                <h2>Resumen Profesional</h2>
+                <p>
+                    Profesional versátil con una sólida trayectoria en la gestión de operaciones, supervisión de personal y control de inventarios en los sectores de restaurantes y producción. Experiencia demostrada en la optimización de costos, implementación de procesos de calidad y liderazgo de equipos de hasta 60 personas. Complemento mi experiencia operativa con habilidades técnicas en programación y desarrollo de software (Java, Python, Node.js), enfocado en la automatización de procesos y la creación de soluciones CRM para mejorar la eficiencia empresarial.
+                </p>
+            </section>
+
+            <section>
+                <h2>Experiencia Profesional</h2>
+                <article>
+                    <h3><strong>Gerente de Restaurante</strong> - <span>INTUR</span></h3>
+                    <ul>
+                        <li>Responsable de la administración integral del restaurante, garantizando el cumplimiento de altos estándares de calidad y servicio para maximizar la rentabilidad.</li>
+                        <li>Lideré y supervisé un equipo de 16 personas, gestionando horarios, programas de capacitación y evaluaciones de desempeño.</li>
+                        <li>Implementé controles rigurosos de inventario, costos y conciliaciones bancarias para optimizar los márgenes operativos.</li>
+                        <li>Desarrollé e implementé procedimientos de limpieza y buenas prácticas operativas.</li>
+                        <li>Elaboré reportes de rendimiento y diseñé estrategias para la optimización de costos.</li>
+                        <li>Gestioné el ciclo completo de pedidos y control de insumos, además del manejo de efectivo y cierres de caja.</li>
+                    </ul>
+                </article>
+                <article>
+                    <h3><strong>Supervisor de Producción</strong> - <span>Dieck y Dieck</span></h3>
+                    <ul>
+                        <li>Coordiné y dirigí un equipo de 60 colaboradores en la línea de producción de arroz, supervisando el proceso desde la recepción de materia prima hasta el empaque final.</li>
+                        <li>Administré eficientemente los inventarios de producción y planifiqué paros para mantenimiento preventivo, minimizando el tiempo de inactividad.</li>
+                        <li>Desarrollé e implementé controles de trazabilidad y elaboré informes de KPIs para monitorear el rendimiento productivo.</li>
+                        <li>Participé activamente en la mejora continua de procesos, contribuyendo a la aprobación de la certificación HACCP para la planta.</li>
+                    </ul>
+                </article>
+                <article>
+                    <h3><strong>Jefe de Inventarios</strong> - <span>Pats</span></h3>
+                    <ul>
+                        <li>Encargado de la gestión centralizada de inventarios para seis sucursales de restaurantes en San Pedro Sula y Tegucigalpa.</li>
+                        <li>Diseñé e implementé controles de mermas y estrategias efectivas que lograron reducir las pérdidas.</li>
+                        <li>Desarrollé análisis y reportes comparativos mensuales para la toma de decisiones estratégicas.</li>
+                        <li>Optimicé el sistema de inventarios y los procesos de requisiciones entre restaurantes, mejorando la eficiencia del abastecimiento.</li>
+                    </ul>
+                </article>
+                <article>
+                    <h3><strong>Programador</strong> - <span>Agencia de Empleos Henmir</span></h3>
+                    <ul>
+                        <li>Diseñé, desarrollé e implementé un sistema CRM automatizado que optimizó significativamente los flujos de trabajo de la empresa.</li>
+                        <li>Creé chatbots y procesos inteligentes para mejorar la interacción y el seguimiento de candidatos y clientes.</li>
+                        <li>Desarrollé soluciones de software utilizando Java, JavaScript, Python y Node.js.</li>
+                        <li>Integré bases de datos (MySQL, SQLite, PostgreSQL) y APIs para automatizar tareas clave y mejorar la productividad general.</li>
+                    </ul>
+                </article>
+            </section>
+
+            <section>
+                <h2>Habilidades</h2>
+                <div class="skills-container">
+                    <div class="skill-category">
+                        <h4>Gestión y Operaciones</h4>
+                        <ul>
+                            <li>Liderazgo de Equipos</li>
+                            <li>Gestión de Inventarios y Costos</li>
+                            <li>Planificación de Producción</li>
+                            <li>Control de KPIs y Análisis de Datos</li>
+                            <li>Servicio al Cliente</li>
+                        </ul>
+                    </div>
+                    <div class="skill-category">
+                        <h4>Técnicas</h4>
+                        <ul>
+                            <li><strong>Lenguajes:</strong> Java, JavaScript, Python, Node.js</li>
+                            <li><strong>Bases de Datos:</strong> MySQL, SQLite, PostgreSQL</li>
+                            <li><strong>Software:</strong> Excel Avanzado</li>
+                            <li><strong>Otros:</strong> Automatización e Integración de APIs</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <section>
+                <h2>Educación y Certificaciones</h2>
+                <ul>
+                    <li>Certificado en Programación en Python - INFOP</li>
+                    <li>Certificado en Programación en Java - Oracle</li>
+                    <li>Certificado en MySQL - INFOP</li>
+                    <li>Certificado en Excel Avanzado</li>
+                    <li>Aprendiz autodidacta apasionado por nuevas tecnologías y automatización.</li>
+                </ul>
+            </section>
+
+        </main>
+    </div>
+
+</body>
+</html>

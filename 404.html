@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Redirigiendo...</title>
+  <script>
+    // Obtener la ruta actual
+    const path = window.location.pathname;
+    
+    // Redirigir a la SPA si la ruta comienza con /crm/
+    if (path.startsWith('/crm/')) {
+      const subPath = path.replace('/crm', '');
+      window.location.href = '/Zenith-Work-CRM/crm/#' + subPath;
+    } 
+    // Redirigir a la landing page en otros casos
+    else {
+      window.location.href = '/Zenith-Work-CRM/';
+    }
+  </script>
+</head>
+<body>
+  <p>Redirigiendo a la aplicación...</p>
+  <p>Si no eres redirigido automáticamente, <a id="redirectLink" href="/Zenith-Work-CRM/">haz clic aquí</a>.</p>
+  
+  <script>
+    // Actualizar el enlace de redirección
+    document.getElementById('redirectLink').href = 
+      window.location.pathname.startsWith('/crm/') 
+        ? '/Zenith-Work-CRM/crm/#' + window.location.pathname.replace('/crm', '')
+        : '/Zenith-Work-CRM/';
+  </script>
+</body>
+</html>
