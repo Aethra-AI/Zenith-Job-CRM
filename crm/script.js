@@ -162,37 +162,73 @@ function setupEventListeners() {
     // --------------------------------------------------
     // PARTE 1: NAVEGACIÓN PRINCIPAL POR PESTAÑAS (Lógica de no-recarga)
     // --------------------------------------------------
-    document.querySelectorAll('.tab-btn').forEach(tab => {
-        tab.addEventListener('click', (e) => {
-            const tabId = e.currentTarget.dataset.tab;
+    // Usar delegación de eventos para manejar clics en los botones de pestaña
+    document.addEventListener('click', (e) => {
+        const tabBtn = e.target.closest('.tab-btn');
+        if (!tabBtn) return;
+        
+        e.preventDefault();
+        const tabId = tabBtn.dataset.tab;
+        if (!tabId) return;
 
-            // Ocultar todos los paneles y desactivar todos los botones
-            document.querySelectorAll('.panel').forEach(p => p.style.display = 'none');
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        // Ocultar todos los paneles y desactivar todos los botones
+        document.querySelectorAll('.panel').forEach(p => p.style.display = 'none');
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
 
-            // Activar el botón y el panel seleccionados
-            const targetPanel = document.getElementById(tabId);
-            e.currentTarget.classList.add('active');
-            if (targetPanel) {
-                targetPanel.style.display = 'block';
+        // Activar el botón y el panel seleccionados
+        const targetPanel = document.getElementById(tabId);
+        if (!targetPanel) return;
+        
+        tabBtn.classList.add('active');
+        targetPanel.style.display = 'block';
+        
+        // Actualizar la URL sin recargar la página
+        const newUrl = window.location.pathname + (tabId !== 'dashboard' ? `#${tabId}` : '');
+        window.history.pushState({ tabId }, '', newUrl);
 
-                const hasBeenLoaded = targetPanel.dataset.loaded === 'true';
+        const hasBeenLoaded = targetPanel.dataset.loaded === 'true';
 
-                // Excepciones: Siempre recargar el dashboard y la búsqueda
-                if (!hasBeenLoaded || tabId === 'dashboard' || tabId === 'buscar') {
-                    loadPanelContent(tabId);
-                    // Marcamos el panel como cargado para que no vuelva a recargarse,
-                    // a menos que sea una de las excepciones.
-                    targetPanel.dataset.loaded = 'true';
-                }
-                
-                // Si la pestaña a la que vamos es la de chat, llamamos a su lógica de renderizado/sincronización
-                if (tabId === 'whatsapp_chat') {
-                    renderWhatsappChatView();
-                }
-            }
-        });
+        // Excepciones: Siempre recargar el dashboard y la búsqueda
+        if (!hasBeenLoaded || tabId === 'dashboard' || tabId === 'buscar') {
+            loadPanelContent(tabId);
+            // Marcamos el panel como cargado para que no vuelva a recargarse,
+            // a menos que sea una de las excepciones.
+            targetPanel.dataset.loaded = 'true';
+        }
+        
+        // Si la pestaña a la que vamos es la de chat, llamamos a su lógica de renderizado/sincronización
+        if (tabId === 'whatsapp_chat') {
+            renderWhatsappChatView();
+        }
     });
+    
+    // Manejar el botón de retroceso/avance del navegador
+    window.addEventListener('popstate', (e) => {
+        const tabId = e.state?.tabId || 'dashboard';
+        const tabBtn = document.querySelector(`.tab-btn[data-tab="${tabId}"]`);
+        if (tabBtn) tabBtn.click();
+    });
+    
+    // Cargar la pestaña correcta basada en el hash de la URL al cargar la página
+    const loadTabFromHash = () => {
+        const hash = window.location.hash.replace('#', '');
+        const tabId = hash || 'dashboard';
+        const tabBtn = document.querySelector(`.tab-btn[data-tab="${tabId}"]`);
+        if (tabBtn) {
+            tabBtn.click();
+        } else {
+            // Si no se encuentra la pestaña, cargar el dashboard por defecto
+            const defaultTab = document.querySelector('.tab-btn[data-tab="dashboard"]');
+            if (defaultTab) defaultTab.click();
+        }
+    };
+    
+    // Cargar la pestaña correcta después de que se cargue el DOM
+    if (document.readyState === 'complete') {
+        loadTabFromHash();
+    } else {
+        window.addEventListener('load', loadTabFromHash);
+    }
 
     // --------------------------------------------------
     // PARTE 2: LISTENER PARA LA TECLA ESCAPE
