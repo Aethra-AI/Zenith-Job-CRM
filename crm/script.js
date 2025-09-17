@@ -12,12 +12,17 @@ const isLandingPage = window.location.pathname.includes('landing') ||
 // Guardia de ruta: Redirige según el estado de autenticación
 const token = localStorage.getItem('crm_token');
 
+// Obtener la ruta base según el entorno
+const basePath = window.location.hostname.includes('github.io') 
+    ? '/Zenith-Job-CRM/' 
+    : '/';
+
 if (!isLandingPage && !token) {
     // Si NO estamos en la landing y NO hay token, redirigir a la landing
-    window.location.href = '../index.html';
+    window.location.href = basePath === '/' ? '../index.html' : basePath;
 } else if (isLandingPage && token) {
     // Si estamos en la landing pero SÍ tenemos un token, redirigir a la app
-    window.location.href = 'crm/index.html';
+    window.location.href = basePath + 'crm/';
 }
 
 // Función para realizar el inicio de sesión
@@ -26,6 +31,11 @@ async function login() {
     const password = document.getElementById('password')?.value;
     const errorMsg = document.getElementById('error-message');
     const loginBtn = document.getElementById('login-btn');
+    
+    // Obtener la ruta base según el entorno
+    const basePath = window.location.hostname.includes('github.io') 
+        ? '/Zenith-Job-CRM/' 
+        : '/';
 
     if (!email || !password) {
         showError('Por favor, ingresa el correo y la contraseña.');
@@ -58,9 +68,16 @@ async function login() {
             throw new Error(data.message || 'Error en las credenciales');
         }
 
-        // Guardar el token y redirigir
+        // Guardar el token
         localStorage.setItem('crm_token', data.token);
-        window.location.href = 'index.html';
+        localStorage.setItem('crm_refresh_token', data.refreshToken);
+        localStorage.setItem('crm_token_expiry', (Date.now() + (data.expiresIn * 1000)).toString());
+        
+        // Redirigir al dashboard con la ruta correcta
+        const redirectPath = basePath.endsWith('/') 
+            ? basePath + 'crm/'
+            : basePath + '/crm/';
+        window.location.href = redirectPath;
 
     } catch (error) {
         showError(error.message || 'Error al iniciar sesión. Intenta de nuevo.');
@@ -75,10 +92,18 @@ async function login() {
 
 // Función para cerrar sesión
 function logout() {
+    // Obtener la ruta base según el entorno
+    const basePath = window.location.hostname.includes('github.io') 
+        ? '/Zenith-Job-CRM/'
+        : '/';
+        
     // Limpiar datos de sesión
     localStorage.removeItem('crm_token');
+    localStorage.removeItem('crm_refresh_token');
+    localStorage.removeItem('crm_token_expiry');
+    
     // Redirigir a la landing page
-    window.location.href = '../index.html';
+    window.location.href = basePath === '/' ? '../index.html' : basePath;
 }
 
 // Función auxiliar para mostrar mensajes de error
