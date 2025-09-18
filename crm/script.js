@@ -4,25 +4,34 @@
 // --- AUTENTICACIÓN Y GESTIÓN DE SESIÓN ---
 // ======================================================
 
-// Determina si estamos en la landing page
-const isLandingPage = window.location.pathname.includes('landing') || 
-                     window.location.pathname.endsWith('/') ||
-                     window.location.pathname.endsWith('index.html');
-
-// Guardia de ruta: Redirige según el estado de autenticación
+// Obtener token y ruta actual
 const token = localStorage.getItem('crm_token');
+const currentPath = window.location.pathname;
+
+// Determinar si estamos en la landing page o en el CRM
+const isLandingPage = !currentPath.includes('/crm/') && 
+                     (currentPath.endsWith('/') || 
+                      currentPath.endsWith('index.html') ||
+                      currentPath.endsWith('/Zenith-Job-CRM/') ||
+                      currentPath.endsWith('/Zenith-Job-CRM/index.html'));
 
 // Obtener la ruta base según el entorno
-const basePath = window.location.hostname.includes('github.io') 
-    ? '/Zenith-Job-CRM/' 
-    : '/';
+const isGHPages = window.location.hostname.includes('github.io');
+const basePath = isGHPages ? '/Zenith-Job-CRM/' : '/';
+const crmPath = isGHPages ? basePath + 'crm/' : '/crm/';
 
-if (!isLandingPage && !token) {
-    // Si NO estamos en la landing y NO hay token, redirigir a la landing
-    window.location.href = basePath === '/' ? '../index.html' : basePath;
-} else if (isLandingPage && token) {
-    // Si estamos en la landing pero SÍ tenemos un token, redirigir a la app
-    window.location.href = basePath + 'crm/';
+// Evitar redirecciones innecesarias
+const shouldRedirectToLanding = !isLandingPage && !token;
+const shouldRedirectToCRM = isLandingPage && token && !currentPath.startsWith(crmPath);
+
+// Manejar redirecciones
+if (shouldRedirectToLanding) {
+    // Redirigir a la landing page si no hay token
+    window.location.href = basePath + 'index.html';
+} else if (shouldRedirectToCRM) {
+    // Redirigir al dashboard después del inicio de sesión exitoso
+    // Usar replace() en lugar de href para evitar problemas con el historial del navegador
+    window.location.replace(crmPath);
 }
 
 // Función para realizar el inicio de sesión
@@ -32,10 +41,7 @@ async function login() {
     const errorMsg = document.getElementById('error-message');
     const loginBtn = document.getElementById('login-btn');
     
-    // Obtener la ruta base según el entorno
-    const basePath = window.location.hostname.includes('github.io') 
-        ? '/Zenith-Job-CRM/' 
-        : '/';
+    // Usar la ruta base ya definida al inicio del archivo
 
     if (!email || !password) {
         showError('Por favor, ingresa el correo y la contraseña.');
