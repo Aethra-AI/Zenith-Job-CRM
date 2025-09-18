@@ -168,64 +168,38 @@ function setupEventListeners() {
     // --------------------------------------------------
     // PARTE 1: NAVEGACIÓN PRINCIPAL POR PESTAÑAS (Lógica de no-recarga)
     // --------------------------------------------------
-    document.querySelectorAll('.tab-btn').forEach(tab => {
-        tab.addEventListener('click', (e) => {
-            e.preventDefault(); // Prevenir comportamiento por defecto de los enlaces
-            e.stopPropagation(); // Detener la propagación del evento
+    document.addEventListener('click', (e) => {
+        // Manejar clics en los botones de navegación
+        const navBtn = e.target.closest('.nav-btn');
+        if (navBtn && navBtn.dataset.tab) {
+            e.preventDefault();
+            e.stopPropagation();
             
-            const tabId = e.currentTarget.getAttribute('data-tab');
-            if (!tabId) return; // Salir si no hay ID de pestaña
-
-            // Ocultar todos los paneles y desactivar todos los botones
-            document.querySelectorAll('.panel').forEach(p => p.style.display = 'none');
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-
-            // Activar el botón y el panel seleccionados
-            const targetPanel = document.getElementById(tabId);
-            if (!targetPanel) return; // Salir si no se encuentra el panel
+            const tabId = navBtn.dataset.tab;
+            console.log(`Navegando a pestaña: ${tabId}`);
             
-            e.currentTarget.classList.add('active');
-            targetPanel.style.display = 'block';
-
-            // Cargar el contenido del panel según corresponda
-            switch (tabId) {
-                case 'dashboard':
-                    renderDashboard();
-                    break;
-                case 'buscar':
-                    renderCandidateSearch();
-                    break;
-                case 'vacantes':
-                    renderVacanciesView();
-                    break;
-                case 'postulaciones':
-                    renderPostulacionesView();
-                    break;
-                case 'entrevistas':
-                    renderEntrevistasView();
-                    break;
-                case 'contratados':
-                    renderContratadosView();
-                    break;
-                case 'clientes':
-                    renderClientsView();
-                    break;
-                case 'reportes':
-                    renderReportsView();
-                    break;
-                case 'configuracion':
-                    renderSettingsView();
-                    break;
-                case 'mensajes':
-                    renderMessagesView();
-                    break;
-                case 'whatsapp_chat':
-                    renderWhatsappChatView();
-                    break;
-                default:
-                    console.warn(`No se encontró un manejador para la pestaña: ${tabId}`);
+            // Cargar el contenido del panel usando loadPanelContent
+            loadPanelContent(tabId);
+        }
+        
+        // Manejar clics en los elementos del menú desplegable
+        const dropdownItem = e.target.closest('.dropdown-item');
+        if (dropdownItem && dropdownItem.dataset.tab) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const tabId = dropdownItem.dataset.tab;
+            console.log(`Navegando a pestaña desde menú: ${tabId}`);
+            
+            // Cerrar el menú desplegable
+            const dropdown = dropdownItem.closest('.dropdown');
+            if (dropdown) {
+                dropdown.classList.remove('show');
             }
-        });
+            
+            // Cargar el contenido del panel
+            loadPanelContent(tabId);
+        }
     });
 
     // --------------------------------------------------
@@ -374,10 +348,27 @@ function handleError(error) {
 // --- LÓGICA DE CARGA DE PANELES ---
 // ======================================================
 async function loadPanelContent(panelId) {
+    console.log(`Cargando panel: ${panelId}`);
     const panel = document.getElementById(panelId);
     if (!panel) {
         console.error(`Panel no encontrado: ${panelId}`);
         return;
+    }
+
+    // Ocultar todos los paneles primero
+    document.querySelectorAll('.panel').forEach(p => {
+        p.classList.remove('active');
+    });
+    
+    // Desactivar todos los botones de navegación
+    document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+
+    // Activar el botón correspondiente
+    const activeBtn = document.querySelector(`.nav-btn[data-tab="${panelId}"]`);
+    if (activeBtn) {
+        activeBtn.classList.add('active');
     }
 
     // Mostrar indicador de carga
@@ -390,7 +381,13 @@ async function loadPanelContent(panelId) {
     
     // Guardar el contenido actual para restaurarlo en caso de error
     const originalContent = panel.innerHTML;
-    panel.innerHTML = loadingHtml;
+    
+    // Solo mostrar loading si el panel no ha sido cargado previamente
+    if (panel.getAttribute('data-loaded') !== 'true') {
+        panel.innerHTML = loadingHtml;
+    } else {
+        panel.classList.add('active');
+    }
 
     try {
         // Llamar a la función de renderizado correspondiente
@@ -439,8 +436,9 @@ async function loadPanelContent(panelId) {
                 throw new Error(`Panel no reconocido: ${panelId}`);
         }
         
-        // Marcar el panel como cargado
+        // Marcar el panel como cargado y mostrarlo
         panel.setAttribute('data-loaded', 'true');
+        panel.classList.add('active');
         
     } catch (error) {
         console.error(`Error al cargar el panel ${panelId}:`, error);
