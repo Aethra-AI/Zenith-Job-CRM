@@ -460,6 +460,187 @@ async function loadPanelContent(panelId) {
 }
 
 // ======================================================
+// --- FUNCIONES DE GRÁFICOS ---
+// ======================================================
+
+/**
+ * Renderiza un gráfico de pastel para mostrar la distribución de estados.
+ * @param {Object} statusData - Datos de estado para el gráfico.
+ */
+function renderStatusPieChart(statusData) {
+    const ctx = document.getElementById('statusPieChart');
+    if (!ctx) return;
+    
+    // Verificar si ya existe un gráfico y destruirlo
+    if (window.statusPieChart) {
+        window.statusPieChart.destroy();
+    }
+
+    // Preparar datos para el gráfico
+    const labels = Object.keys(statusData);
+    const data = Object.values(statusData);
+    const backgroundColors = [
+        '#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b', 
+        '#858796', '#5a5c69', '#e83e8c', '#fd7e14', '#20c9a6'
+    ];
+
+    // Crear el gráfico
+    window.statusPieChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: labels,
+            datasets: [{
+                data: data,
+                backgroundColor: backgroundColors.slice(0, labels.length),
+                hoverBackgroundColor: backgroundColors.slice(0, labels.length),
+                hoverBorderColor: 'rgba(234, 236, 244, 1)',
+            }],
+        },
+        options: {
+            maintainAspectRatio: false,
+            tooltips: {
+                backgroundColor: 'rgb(255,255,255)',
+                bodyFontColor: '#858796',
+                borderColor: '#dddfeb',
+                borderWidth: 1,
+                xPadding: 15,
+                yPadding: 15,
+                displayColors: true,
+                caretPadding: 10,
+            },
+            legend: {
+                display: true,
+                position: 'right',
+            },
+            cutoutPercentage: 70,
+        },
+    });
+}
+
+/**
+ * Renderiza un gráfico de líneas para mostrar la actividad.
+ * @param {Array} afiliadosData - Datos de afiliados.
+ * @param {Array} postulacionesData - Datos de postulaciones.
+ */
+function renderActivityLineChart(afiliadosData, postulacionesData) {
+    const ctx = document.getElementById('activityLineChart');
+    if (!ctx) return;
+    
+    // Verificar si ya existe un gráfico y destruirlo
+    if (window.activityLineChart) {
+        window.activityLineChart.destroy();
+    }
+
+    // Obtener las fechas de los últimos 30 días
+    const dates = [];
+    for (let i = 29; i >= 0; i--) {
+        const date = new Date();
+        date.setDate(date.getDate() - i);
+        dates.push(date.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' }));
+    }
+
+    // Crear el gráfico
+    window.activityLineChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: dates,
+            datasets: [
+                {
+                    label: 'Nuevos Afiliados',
+                    data: afiliadosData.map(item => item.total),
+                    backgroundColor: 'rgba(78, 115, 223, 0.05)',
+                    borderColor: 'rgba(78, 115, 223, 1)',
+                    pointRadius: 3,
+                    pointBackgroundColor: 'rgba(78, 115, 223, 1)',
+                    pointBorderColor: 'rgba(78, 115, 223, 1)',
+                    pointHoverRadius: 3,
+                    pointHoverBackgroundColor: 'rgba(78, 115, 223, 1)',
+                    pointHoverBorderColor: 'rgba(78, 115, 223, 1)',
+                    pointHitRadius: 10,
+                    pointBorderWidth: 2,
+                    tension: 0.3,
+                    fill: true,
+                },
+                {
+                    label: 'Postulaciones',
+                    data: postulacionesData.map(item => item.total),
+                    backgroundColor: 'rgba(28, 200, 138, 0.05)',
+                    borderColor: 'rgba(28, 200, 138, 1)',
+                    pointRadius: 3,
+                    pointBackgroundColor: 'rgba(28, 200, 138, 1)',
+                    pointBorderColor: 'rgba(28, 200, 138, 1)',
+                    pointHoverRadius: 3,
+                    pointHoverBackgroundColor: 'rgba(28, 200, 138, 1)',
+                    pointHoverBorderColor: 'rgba(28, 200, 138, 1)',
+                    pointHitRadius: 10,
+                    pointBorderWidth: 2,
+                    tension: 0.3,
+                    fill: true,
+                }
+            ],
+        },
+        options: {
+            maintainAspectRatio: false,
+            layout: {
+                padding: {
+                    left: 10,
+                    right: 25,
+                    top: 25,
+                    bottom: 0
+                }
+            },
+            scales: {
+                x: {
+                    grid: {
+                        display: false,
+                        drawBorder: false
+                    },
+                    ticks: {
+                        maxTicksLimit: 7
+                    }
+                },
+                y: {
+                    ticks: {
+                        maxTicksLimit: 5,
+                        padding: 10,
+                        callback: function(value) {
+                            return value;
+                        }
+                    },
+                    grid: {
+                        color: 'rgb(234, 236, 244)',
+                        borderDash: [2],
+                        drawBorder: false,
+                        zeroLineColor: 'rgb(234, 236, 244)',
+                        zeroLineBorderDash: [2],
+                        zeroLineBorderDashOffset: [2]
+                    }
+                }
+            },
+            legend: {
+                display: true,
+                position: 'top',
+            },
+            tooltips: {
+                backgroundColor: 'rgb(255,255,255)',
+                bodyFontColor: '#858796',
+                titleMarginBottom: 10,
+                titleFontColor: '#6e707e',
+                titleFontSize: 14,
+                borderColor: '#dddfeb',
+                borderWidth: 1,
+                xPadding: 15,
+                yPadding: 15,
+                displayColors: false,
+                intersect: false,
+                mode: 'index',
+                caretPadding: 10,
+            }
+        }
+    });
+}
+
+// ======================================================
 // --- RENDERIZADO DE VISTAS PRINCIPALES ---
 // ======================================================
 
